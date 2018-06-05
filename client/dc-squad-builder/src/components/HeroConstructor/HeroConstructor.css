@@ -1,0 +1,28 @@
+.HeroConstructor {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
+  margin: 8px 0;
+  padding: 20px 0;
+  box-shadow: 0px 3px 8px 1px rgba(0, 0, 0, 0.75);
+}
+
+.HeroConstructor__NameInput {
+  margin: 18px;
+  border: 0;
+  border-bottom: 2px solid black;
+  outline: none;
+  font-size: 16px;
+  line-height: 2em;
+}
+
+.HeroConstructor__AttributeSelect {
+
+  margin: 18px;
+  border: 0;
+  border-bottom: 2px solid black;
+  outline: none;
+  font-size: 16px;
+  line-height: 2em;
+}

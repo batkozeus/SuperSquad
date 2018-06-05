@@ -1,0 +1,24 @@
+.SquadEditor {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+}
+
+.SquadEditor__ButtonContainer {
+  display: flex;
+  flex-direction: row;
+  padding: 12px;
+}
+
+.SquadEditor__TotalAttrInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+}
+
+.SquadEditor__singleAttrInfo {
+  font-size: 18px;
+  margin: 4px;
+}

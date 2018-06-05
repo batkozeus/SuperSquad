@@ -1,0 +1,41 @@
+.SquadCard {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+  position: relative;
+  padding-top: 24px;
+  width: 100%;
+  margin: 8px 0;
+  box-shadow: 0px 3px 8px 1px rgba(0, 0, 0, 0.75);
+}
+
+.SquadCard__Section {
+  width: 50%;
+  padding: 8px;
+}
+
+.SquadCard__Header {
+  text-align: center;
+  margin: 8px;
+  padding: 16px 4px;
+}
+
+.SquadCard__HeroesList {
+  margin: 4px;
+  padding-left: 24px;
+  font-size: 18px;
+}
+
+.SquadCard__StatsList {
+  font-size: 18px;
+  margin: 4px;
+}
+
+.SquadCard__DeleteBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  margin: 4px;
+}
