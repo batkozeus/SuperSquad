@@ -9,7 +9,6 @@ export const getSquadHeroes = (serverHeroesList, squadHeroesList) =>
   serverHeroesList.filter(hero => squadHeroesList.includes(hero.id));
 
 export const composeSquad = (serverHeroesList, squadHeroesList) => {
-  const newSquad = {};
   const composeSquadHeroes =
     serverHeroesList.filter(hero => squadHeroesList.includes(hero.id));
   const getTotalAttrInfo = {
@@ -25,8 +24,10 @@ export const composeSquad = (serverHeroesList, squadHeroesList) => {
       (acc, hero) => acc + hero.speed,
       0
     )
-  }
-  newSquad.heroes = composeSquadHeroes;
-  newSquad.stats = getTotalAttrInfo;
+  };
+  const newSquad = {
+    heroes: composeSquadHeroes,
+    stats: getTotalAttrInfo
+  };
   return newSquad;
 };

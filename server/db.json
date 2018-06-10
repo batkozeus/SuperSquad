@@ -178,6 +178,37 @@
         "spd": 16
       },
       "id": 4
+    },
+    {
+      "heroes": [
+        {
+          "id": 0,
+          "name": "Superman",
+          "strength": 10,
+          "intelligence": 7,
+          "speed": 9
+        },
+        {
+          "id": 4,
+          "name": "Green Lantern",
+          "strength": 7,
+          "intelligence": 8,
+          "speed": 7
+        },
+        {
+          "id": 7,
+          "name": "Green Arrow",
+          "strength": 5,
+          "intelligence": 9,
+          "speed": 7
+        }
+      ],
+      "stats": {
+        "str": 22,
+        "int": 22,
+        "spd": 23
+      },
+      "id": 5
     }
   ]
 }
