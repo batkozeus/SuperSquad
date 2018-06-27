@@ -1,30 +1,28 @@
 export const getVisibleHeroes = (heroes, filteredHeroName) =>
   heroes.filter(hero =>
-    hero.name.toUpperCase().includes(filteredHeroName.toUpperCase()));
+    hero.name.toLowerCase().includes(filteredHeroName.toLowerCase()));
 
-export const getAvailableHeroes = (serverHeroesList, squadHeroesList) =>
-  serverHeroesList.filter(hero => !squadHeroesList.includes(hero.id));
+export const getAvailableHeroes = (allHeroes, ids) =>
+  allHeroes.filter(hero => !ids.includes(hero.id));
 
-export const getSquadHeroes = (serverHeroesList, squadHeroesList) =>
-  serverHeroesList.filter(hero => squadHeroesList.includes(hero.id));
+export const getSquadHeroes = (allHeroes, ids) =>
+  allHeroes.filter(hero => ids.includes(hero.id));
 
-export const composeSquad = (serverHeroesList, squadHeroesList) => {
+export const getAttrInfo = (squadHeroes, attr) =>
+squadHeroes.reduce((acc, hero) => acc + hero[attr],
+  0
+);
+
+export const composeSquad = (allHeroes, ids) => {
   const composeSquadHeroes =
-    serverHeroesList.filter(hero => squadHeroesList.includes(hero.id));
+    allHeroes.filter(hero => ids.includes(hero.id));
+
   const getTotalAttrInfo = {
-    str: composeSquadHeroes.reduce(
-      (acc, hero) => acc + hero.strength,
-      0
-    ),
-    int: composeSquadHeroes.reduce(
-      (acc, hero) => acc + hero.strength,
-      0
-    ),
-    spd: composeSquadHeroes.reduce(
-      (acc, hero) => acc + hero.speed,
-      0
-    )
+    str: getAttrInfo(composeSquadHeroes, 'strength'),
+    int: getAttrInfo(composeSquadHeroes, 'intelligence'),
+    spd: getAttrInfo(composeSquadHeroes, 'speed')
   };
+
   const newSquad = {
     heroes: composeSquadHeroes,
     stats: getTotalAttrInfo

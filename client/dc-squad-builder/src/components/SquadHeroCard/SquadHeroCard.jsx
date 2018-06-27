@@ -6,16 +6,13 @@ import ShowHeroInfoIcon from "../../assets/images/if_ic_info_48px_352431.png";
 
 const SquadHeroCard = ({
   name,
-  strength,
-  intelligence,
-  speed,
   id,
+  showHeroInfo,
   retireHero
 }) => {
-  const showHeroInfo = () => {
-    console.log(
-      `${name} stats:\n strength-${strength}\n intelligence-${intelligence}\n speed-${speed}`
-    );
+  
+  const representHeroInfo = () => {
+    showHeroInfo(id);
   };
 
   const removeHero = () => {
@@ -28,7 +25,7 @@ const SquadHeroCard = ({
         <div onClick={removeHero} role="presentation">
           <img className={styles.SquadHeroCard__Btn} src={DeleteHeroIcon} alt="DeleteHeroIcon" />
         </div>
-        <div onClick={showHeroInfo} role="presentation">
+        <div onClick={representHeroInfo} role="presentation">
           <img className={styles.SquadHeroCard__Btn} src={ShowHeroInfoIcon} alt="ShowHeroInfoIcon" />
         </div>
       </div>
@@ -37,16 +34,13 @@ const SquadHeroCard = ({
 
 SquadHeroCard.propTypes = {
   name: PropTypes.string.isRequired,
-  strength: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    .isRequired,
-  intelligence: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    .isRequired,
-  speed: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   id: PropTypes.number.isRequired,
+  showHeroInfo: PropTypes.func,
   retireHero: PropTypes.func
 };
 
 SquadHeroCard.defaultProps = {
+  showHeroInfo: () => {},
   retireHero: () => {}
 };
 

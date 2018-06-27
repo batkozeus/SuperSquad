@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import PropTypes from "prop-types";
 import styles from "./HeroConstructor.css";
 import styles2 from "../Button/Button.css";
@@ -6,101 +6,83 @@ import AttributeSelect from "../AttributeSelect/AttributeSelect";
 import Button from "../Button/Button";
 import AddHeroIcon from "../../assets/images/if_pencil_383095.png";
 
+const INITIAL_STATE = {
+  name: "",
+  strength: "1",
+  intelligence: "1",
+  speed: "1"
+};
+
 class HeroConstructor extends Component {
   state = {
-    newHeroName: "",
-    newHeroStrength: "strength",
-    newHeroIntelligence: "intelligence",
-    newHeroSpeed: "speed",
-    resetAttributes: false
+    ...INITIAL_STATE
   };
 
-  setHeroName = evt => {
-    const heroNameValue = evt.target.value;
+  onInputChange = ({ target }) => {
+    const { name, value } = target;
     this.setState({
-      newHeroName: heroNameValue
+      [name]: value
     });
   };
 
-  setHeroStrength = heroStrengthValue => {
-    this.setState({
-      newHeroStrength: Number(heroStrengthValue)
-    });
-  };
-
-  setHeroIntelligence = heroIntelligenceValue => {
-    this.setState({
-      newHeroIntelligence: Number(heroIntelligenceValue)
-    });
-  };
-
-  setHeroSpeed = heroSpeedValue => {
-    this.setState({
-      newHeroSpeed: Number(heroSpeedValue)
-    });
-  };
-
-  setHero = evt => {
+  handleSubmit = evt => {
     evt.preventDefault();
-    const {
-      newHeroName,
-      newHeroStrength,
-      newHeroIntelligence,
-      newHeroSpeed
-    } = this.state;
+
+    const { name, strength, intelligence, speed } = this.state;
+
     const newHero = {
-      name: newHeroName,
-      strength: newHeroStrength,
-      intelligence: newHeroIntelligence,
-      speed: newHeroSpeed
+      name,
+      strength: Number(strength),
+      intelligence: Number(intelligence),
+      speed: Number(speed)
     };
-    if (
-      newHeroName === "" ||
-      isNaN(newHeroStrength) ||
-      isNaN(newHeroIntelligence) ||
-      isNaN(newHeroSpeed)
-    ) {
+
+    if (name === "" || isNaN(strength) || isNaN(intelligence) || isNaN(speed)) {
       alert("Check input value!");
-    } else {
-      this.props.formHero(newHero);
-      this.setState({ newHeroName: "" });
-      this.setState({ newHeroStrength: "strength" });
-      this.setState({ newHeroIntelligence: "intelligence" });
-      this.setState({ newHeroSpeed: "speed" });
-      this.setState({ resetAttributes: true });
-      setTimeout(() => {
-        this.setState({ resetAttributes: false });
-      }, 10);
+      return;
     }
+
+    this.props.formHero(newHero);
+    this.resetEditor();
   };
+
+  resetEditor = () => this.setState({ ...INITIAL_STATE });
 
   render() {
-    const { newHeroName, resetAttributes } = this.state;
+    const {
+      name,
+      strength,
+      intelligence,
+      speed
+    } = this.state;
+
     return (
-      <form className={styles.HeroConstructor} onSubmit={this.setHero}>
+      <form className={styles.HeroConstructor} onSubmit={this.handleSubmit}>
         <input
           className={styles.HeroConstructor__NameInput}
-          value={newHeroName}
-          onChange={this.setHeroName}
+          name="name"
+          value={name}
+          onChange={this.onInputChange}
           type="text"
           placeholder="Hero name"
         />
-        {!resetAttributes && (
-          <Fragment>
-            <AttributeSelect
-              attributeName="strength"
-              setHeroAttr={this.setHeroStrength}
-            />
-            <AttributeSelect
-              attributeName="intelligence"
-              setHeroAttr={this.setHeroIntelligence}
-            />
-            <AttributeSelect
-              attributeName="speed"
-              setHeroAttr={this.setHeroSpeed}
-            />
-          </Fragment>
-        )}
+
+        <AttributeSelect
+          attributeName="strength"
+          value={strength}
+          setHeroAttr={this.onInputChange}
+        />
+        <AttributeSelect
+          attributeName="intelligence"
+          value={intelligence}
+          setHeroAttr={this.onInputChange}
+        />
+        <AttributeSelect
+          attributeName="speed"
+          value={speed}
+          setHeroAttr={this.onInputChange}
+        />
+
         <Button type="submit" btnTitle="Add hero">
           <img
             className={styles2.Button__Image}

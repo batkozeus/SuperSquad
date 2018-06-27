@@ -2,7 +2,7 @@ import axios from 'axios';
 
 export const getAllHeroes = () =>
     axios
-    .get(`heroes`)
+    .get("/heroes")
     .then(({data, status}) => {
         if (status === 200) {
             return data;
@@ -13,7 +13,7 @@ export const getAllHeroes = () =>
 
 export const addNewHero = (newHero) =>
     axios
-    .post(`heroes`, newHero)
+    .post("/heroes", newHero)
     .then(({data, status}) => {
         if (status === 201) {
             return data;
@@ -22,14 +22,17 @@ export const addNewHero = (newHero) =>
     })
     .catch(error => {console.error(`Error while adding: ${error}`)});
 
-export const deleteOldHero = (heroId) => 
+export const deleteHero = (heroId) => 
     axios
-    .delete(`heroes/${heroId}`)
-    .then(({status}) => status === 200);
+    .delete(`/heroes/${heroId}`)
+    .then(({status}) => status === 200)
+    .catch(error => {
+        console.error(`Hero wasn't deleted: ${error}`);
+    });
 
 export const getAllSquads = () =>
     axios
-    .get(`squads`)
+    .get("/squads")
     .then(({data, status}) => {
         if (status === 200) {
             return data;
@@ -40,7 +43,7 @@ export const getAllSquads = () =>
 
 export const addNewSquad = (newSquad) =>
     axios
-    .post(`squads`, newSquad)
+    .post("/squads", newSquad)
     .then(({data, status}) => {
         if (status === 201) {
             return data;
@@ -51,5 +54,8 @@ export const addNewSquad = (newSquad) =>
 
 export const deleteOldSquad = (squadId) => 
     axios
-    .delete(`squads/${squadId}`)
-    .then(({status}) => status === 200);
+    .delete(`/squads/${squadId}`)
+    .then(({status}) => status === 200)
+    .catch(error => {
+        console.error(`Squad wasn't deleted: ${error}`);
+    });

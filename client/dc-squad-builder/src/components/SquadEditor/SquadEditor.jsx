@@ -6,28 +6,22 @@ import Button from "../Button/Button";
 import SaveSquadIcon from "../../assets/images/if_save_326688.png";
 import ResetSquadIcon from "../../assets/images/if_154_111057.png";
 
-const SquadEditor = ({ resetHeroes, composeSquad, totalAttrInfo, children }) => 
+import { getAttrInfo } from "../../helpers/creators";
+
+const MAIN_ATTRIBUTES = ["strength", "intelligence", 'speed'];
+
+const SquadEditor = ({ resetHeroes, composeSquad, squadHeroes, children }) => 
   (
   <div className={styles.SquadEditor}>
     <div className={styles.SquadEditor__TotalAttrInfo}>
-      <div
-        className={styles.SquadEditor__singleAttrInfo}
-      >{`Strength: ${totalAttrInfo.reduce(
-        (acc, hero) => acc + hero.strength,
-        0
-      )}`}</div>
-      <div
-        className={styles.SquadEditor__singleAttrInfo}
-      >{`Intelligence: ${totalAttrInfo.reduce(
-        (acc, hero) => acc + hero.strength,
-        0
-      )}`}</div>
-      <div
-        className={styles.SquadEditor__singleAttrInfo}
-      >{`Speed: ${totalAttrInfo.reduce(
-        (acc, hero) => acc + hero.speed,
-        0
-      )}`}</div>
+      {MAIN_ATTRIBUTES.map(attr => (
+        <div className={styles.SquadEditor__singleAttrInfo}>
+            {
+              `${attr.charAt(0).toUpperCase() + attr.slice(1)}: 
+              ${getAttrInfo(squadHeroes, attr)}`
+            }
+        </div>
+      ))}
     </div>
     <div className={styles.SquadEditor__ButtonContainer}>
       <Button btnTitle="Save Squad" btnClick={composeSquad}>
@@ -50,7 +44,7 @@ const SquadEditor = ({ resetHeroes, composeSquad, totalAttrInfo, children }) =>
 );
 
 SquadEditor.propTypes = {
-  totalAttrInfo: PropTypes.arrayOf(
+  squadHeroes: PropTypes.arrayOf(
     PropTypes.shape({
       name: PropTypes.string.isRequired,
       strength: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -65,7 +59,7 @@ SquadEditor.propTypes = {
 };
 
 SquadEditor.defaultProps = {
-  totalAttrInfo: [],
+  squadHeroes: [],
   children: [],
   composeSquad: () => {},
   resetHeroes: () => {}

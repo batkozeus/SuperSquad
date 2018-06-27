@@ -5,14 +5,15 @@ import AppBody from "../AppBody/AppBody";
 import HeroConstructor from "../HeroConstructor/HeroConstructor";
 import HeroesPanel from "../HeroesPanel/HeroesPanel";
 import HeroesFilter from "../HeroesFilter/HeroesFilter";
-import AvailableHeroCard from "../AvailableHeroCard/AvailableHeroCard";
+import HeroesList from "../HeroesList/HeroesList";
 import SquadEditor from "../SquadEditor/SquadEditor";
-import SquadHeroCard from "../SquadHeroCard/SquadHeroCard";
-import SquadCard from "../SquadCard/SquadCard";
+import SquadMembers from "../SquadMembers/SquadMembers";
+import SquadList from "../SquadList/SquadList";
+
 import {
   getAllHeroes,
   addNewHero,
-  deleteOldHero,
+  deleteHero,
   getAllSquads,
   addNewSquad,
   deleteOldSquad
@@ -26,35 +27,37 @@ import {
 
 class App extends Component {
   state = {
-    serverHeroesList: [],
-    squadHeroesList: [],
-    serverSquadList: [],
-    filterByNameHeroes: ""
+    heroes: [],
+    squadEditorIds: [],
+    squads: [],
+    filterByName: ""
   };
 
   componentDidMount() {
-    getAllHeroes().then(data => {
-      this.setState({ serverHeroesList: data });
-    });
-    getAllSquads().then(data => {
-      this.setState({ serverSquadList: data });
-    });
+    const heroesPromise = getAllHeroes();
+
+    const squadPromise = getAllSquads();
+
+    Promise.all([heroesPromise, squadPromise]).then(([heroes, squads]) =>
+      this.setState({
+        heroes,
+        squads
+      })
+    );
   }
 
-  hideHeroesFromList = heroName => {
-    this.setState({ filterByNameHeroes: heroName });
-  };
-
   filterHeroes = heroName => {
-    this.setState({ filterByNameHeroes: heroName });
+    this.setState({ filterByName: heroName });
   };
 
   addHero = newHero => {
-    if (!this.state.serverHeroesList.find(hero => hero.name === newHero.name)) {
+    const isUnique = !this.state.heroes.find(
+      hero => hero.name === newHero.name
+    );
+
+    if (isUnique) {
       addNewHero(newHero).then(data => {
-        this.setState(state => ({
-          serverHeroesList: [...state.serverHeroesList, data]
-        }));
+        this.setState(state => ({ heroes: [...state.heroes, data] }));
       });
     } else {
       alert("Such hero exists");
@@ -62,48 +65,50 @@ class App extends Component {
   };
 
   deleteHero = id => {
-    deleteOldHero(id).then(isSuccess => {
-      if (isSuccess) {
-        this.setState(state => ({
-          serverHeroesList: state.serverHeroesList.filter(
-            hero => hero.id !== id
-          )
-        }));
-      } else {
-        alert("Hero wasn't deleted");
-      }
+    deleteHero(id).then(() => {
+      this.setState(state => ({
+        heroes: state.heroes.filter(hero => hero.id !== id)
+      }));
     });
   };
 
-  addToTeam = id => {
+  addToSquad = id => {
     this.setState(state => ({
-      squadHeroesList: [...state.squadHeroesList, id]
+      squadEditorIds: [...state.squadEditorIds, id]
     }));
   };
 
   removeFromSquad = id => {
     this.setState(state => ({
-      squadHeroesList: state.squadHeroesList.filter(heroId => heroId !== id)
+      squadEditorIds: state.squadEditorIds.filter(heroId => heroId !== id)
     }));
+  };
+
+  showHeroInfo = id => {
+    const chosenHero = !this.state.heroes.find(hero => hero.id === id);
+    console.log(
+      `${chosenHero.name} stats:\n strength-${chosenHero.strength}\n intelligence-${chosenHero.intelligence}\n speed-${chosenHero.speed}`
+    );
   };
 
   resetSquad = () => {
     this.setState({
-      squadHeroesList: []
+      squadEditorIds: []
     });
   };
 
   createSquad = () => {
-    const { serverHeroesList, squadHeroesList } = this.state;
-    const newSquad = composeSquad(serverHeroesList, squadHeroesList);
-    if (squadHeroesList.length !== 0) {
+    const { heroes, squadEditorIds } = this.state;
+    const newSquad = composeSquad(heroes, squadEditorIds);
+
+    if (squadEditorIds.length !== 0) {
       addNewSquad(newSquad).then(data => {
-        this.setState(state => ({
-          serverSquadList: [...state.serverSquadList, data]
-        }));
-      });
-      this.setState({
-        squadHeroesList: []
+        this.setState(
+          state => ({
+            squads: [...state.squads, data]
+          }),
+          this.resetSquad
+        );
       });
     } else {
       alert("Add at list one hero");
@@ -111,41 +116,21 @@ class App extends Component {
   };
 
   deleteSquad = id => {
-    deleteOldSquad(id).then(isSuccess => {
-      if (isSuccess) {
-        this.setState(state => ({
-          serverSquadList: state.serverSquadList.filter(
-            squad => squad.id !== id
-          )
-        }));
-      } else {
-        alert("Squad wasn't deleted");
-      }
+    deleteOldSquad(id).then(() => {
+      this.setState(state => ({
+        squads: state.squads.filter(squad => squad.id !== id)
+      }));
     });
   };
 
   render() {
-    const {
-      serverHeroesList,
-      squadHeroesList,
-      serverSquadList,
-      filterByNameHeroes
-    } = this.state;
+    const { heroes, squadEditorIds, squads, filterByName } = this.state;
 
-    const availableHeroesList = getAvailableHeroes(
-      serverHeroesList,
-      squadHeroesList
-    );
+    const freeHeroes = getAvailableHeroes(heroes, squadEditorIds);
 
-    const forSquadHeroesList = getSquadHeroes(
-      serverHeroesList,
-      squadHeroesList
-    );
+    const squadHeroes = getSquadHeroes(heroes, squadEditorIds);
 
-    const visibleHeroesList = getVisibleHeroes(
-      availableHeroesList,
-      filterByNameHeroes
-    );
+    const searchedHeroes = getVisibleHeroes(freeHeroes, filterByName);
 
     return (
       <div className={styles.App}>
@@ -154,40 +139,35 @@ class App extends Component {
           <HeroesPanel cardTitle="Create Hero">
             <HeroConstructor formHero={this.addHero} />
           </HeroesPanel>
+
           <HeroesPanel cardTitle="Heroes">
-            <HeroesFilter filterHeroes={this.filterHeroes} />
-            {visibleHeroesList.map(hero => (
-              <AvailableHeroCard
-                key={hero.id}
-                {...hero}
-                destroyHero={this.deleteHero}
-                moveHero={this.addToTeam}
-              />
-            ))}
+            <HeroesFilter
+              filteredHeroName={filterByName}
+              filterHeroes={this.filterHeroes}
+            />
+            <HeroesList
+              searchedHeroes={searchedHeroes}
+              destroyHero={this.deleteHero}
+              moveHero={this.addToSquad}
+            />
           </HeroesPanel>
+
           <HeroesPanel cardTitle="Squad Editor">
             <SquadEditor
-              totalAttrInfo={forSquadHeroesList}
+              squadHeroes={squadHeroes}
               resetHeroes={this.resetSquad}
               composeSquad={this.createSquad}
             >
-              {forSquadHeroesList.map(hero => (
-                <SquadHeroCard
-                  key={hero.id}
-                  {...hero}
-                  retireHero={this.removeFromSquad}
-                />
-              ))}
+              <SquadMembers
+                squadHeroes={squadHeroes}
+                showHeroInfo={this.showHeroInfo}
+                retireHero={this.removeFromSquad}
+              />
             </SquadEditor>
           </HeroesPanel>
+
           <HeroesPanel cardTitle="Saved Squads">
-            {serverSquadList.map(squad => (
-              <SquadCard
-                key={squad.id}
-                {...squad}
-                destroySquad={this.deleteSquad}
-              />
-            ))}
+            <SquadList squads={squads} destroySquad={this.deleteSquad} />
           </HeroesPanel>
         </AppBody>
       </div>
